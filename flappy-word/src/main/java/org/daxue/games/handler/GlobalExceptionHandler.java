@@ -30,4 +30,18 @@ public class GlobalExceptionHandler {
         return Result.build(ResultCode.BAD_REQUEST, JSON.toJSONString(errors));
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public Result handleBusinessException(Exception ex) {
+        return Result.build(ResultCode.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Result defaultHandleExceptions(Exception ex) {
+        return Result.build(ResultCode.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
 }
