@@ -25,6 +25,9 @@ public class Score {
     @TableField(value = "user_id")
     String userId;
 
+    @TableField(value = "name")
+    String name;
+
     @TableField(value = "score")
     Integer score;
 

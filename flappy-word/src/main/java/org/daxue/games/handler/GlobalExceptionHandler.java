@@ -31,13 +31,6 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public Result handleBusinessException(Exception ex) {
-        return Result.build(ResultCode.NOT_FOUND, ex.getMessage());
-    }
-
-    @ExceptionHandler(Exception.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result defaultHandleExceptions(Exception ex) {

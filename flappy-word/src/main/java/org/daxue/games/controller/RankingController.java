@@ -36,6 +36,7 @@ public class RankingController {
         Score score = new Score();
         LocalDateTime now = LocalDateTime.now();
         score.setUserId(req.getUserId())
+                .setName(currentUser.getName())
                 .setScore(req.getScore())
                 .setHurdle(req.getHurdle())
                 .setCreateTime(now)
