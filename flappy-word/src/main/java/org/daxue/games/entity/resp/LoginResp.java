@@ -9,4 +9,8 @@ public class LoginResp {
 
     String userId;
 
+    String token;
+
+    Long expire;
+
 }
