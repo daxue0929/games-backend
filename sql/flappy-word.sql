@@ -13,6 +13,7 @@ CREATE TABLE `user`
 CREATE TABLE `score`
 (
     `id`          int unsigned NOT NULL AUTO_INCREMENT,
+    `name`        varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
     `user_id`     varchar(100) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
     `score`       int                                              DEFAULT NULL,
     `hurdle`      int                                              DEFAULT NULL,
