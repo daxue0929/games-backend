@@ -12,4 +12,8 @@ spring:
 mybatis-plus:
   type-aliases-package: org.daxue.games.pojo
   mapper-locations: classpath:/mapper/*Mapper.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+logging:
+  config: classpath:log4j2.xml
