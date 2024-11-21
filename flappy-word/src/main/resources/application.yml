@@ -8,6 +8,12 @@ spring:
     url: jdbc:mysql://117.72.53.38:3306/flappy-word?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
     username: root
     password: your_database_password
+  data:
+    redis:
+      host: 117.72.53.38
+      port: 6379
+      password: your_database_password
+      database: 0
 
 mybatis-plus:
   type-aliases-package: org.daxue.games.pojo
