@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -90,17 +91,19 @@ public class RankingController {
         List<Score> list = scoreService.list(Wrappers.lambdaQuery(Score.class)
                 .orderByDesc(Score::getScore).orderByAsc(Score::getCreateTime)
         );
-        JWTClaimsSet payload = tokenService.getClaims(token);
-        Object name = payload.getClaim("name");
+        Map<String, Object> payload = tokenService.getClaims(token).getClaims();
+        User tokenUser = objectMapper.convertValue(payload, User.class);
         int number = 1;
         UserRankResp.UserRankRespBuilder builder = UserRankResp.builder()
                 .userId(userId)
-                .name(name.toString());
+                .name(tokenUser.getName());
         Boolean flag = true;
         for (int i = 0; i <list.size(); i++) {
             Score score = list.get(i);
             if (score.getUserId().equals(userId)) {
                 flag = false;
+                builder.score(score.getScore());
+                builder.hurdle(score.getHurdle());
                 number = i;
                 break;
             }
