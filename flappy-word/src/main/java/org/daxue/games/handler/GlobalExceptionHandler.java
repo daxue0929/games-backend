@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.daxue.games.entity.common.Result;
 import org.daxue.games.entity.common.ResultCode;
+import org.daxue.games.exception.base.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,6 +31,12 @@ public class GlobalExceptionHandler {
         });
         ObjectMapper objectMapper = new ObjectMapper();
         return Result.build(ResultCode.BAD_REQUEST, objectMapper.writeValueAsString(errors));
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    @ResponseBody
+    public Result handleBusinessExceptions(BusinessException businessException) {
+        return Result.build(businessException.getCode(), businessException.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

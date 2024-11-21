@@ -26,6 +26,12 @@ public class Result<T> {
         return result;
     }
 
+    public static <T> Result<T> build(Integer resultCode, String message) {
+        Result<T> result = new Result<>(resultCode, message);
+        return result;
+    }
+
+
     public static <T> Result<T> build(ResultCode resultCode, String message) {
         Result<T> result = new Result<>(resultCode.code, message);
         return result;

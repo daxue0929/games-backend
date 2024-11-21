@@ -11,4 +11,6 @@ public class LoginResp {
 
     String token;
 
+    String refreshToken;
+
 }

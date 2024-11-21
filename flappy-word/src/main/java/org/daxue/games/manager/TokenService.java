@@ -8,6 +8,8 @@ import com.nimbusds.jwt.SignedJWT;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import org.apache.commons.io.IOUtils;
+import org.daxue.games.entity.common.ResultCode;
+import org.daxue.games.exception.base.BusinessException;
 import org.daxue.games.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
@@ -34,7 +36,6 @@ import java.util.Map;
 public class TokenService {
 
     private static final String TOKEN_USER = "token_user_id:{0}";
-    private static final Long expireSecond = 60 * 60L;
 
     public Boolean saveToken(String userId, String jwtToken, long expireSecond) {
         String key = MessageFormat.format(TOKEN_USER, userId);
@@ -46,7 +47,7 @@ public class TokenService {
         return redisUtil.get(key, String.class);
     }
 
-    public String createJwt(String subject, Map<String, Object> claims) throws JOSEException {
+    public String createJwt(String subject, Long expireSecond, Map<String, Object> claims) throws JOSEException {
         JWSSigner signer = new RSASSASigner(privateKey);
         JWTClaimsSet.Builder claimsSetBuilder = new JWTClaimsSet.Builder()
                 .subject(subject)
@@ -72,7 +73,7 @@ public class TokenService {
         Date expirationTime = claims.getExpirationTime();
         Date currentTime = new Date();
         if (expirationTime != null && currentTime.after(expirationTime)) {
-            throw new JOSEException("JWT has expired");
+            throw new BusinessException(ResultCode.UNAUTHORIZED_EXPIRE);
         }
         JWSVerifier verifier = new RSASSAVerifier(publicKey);
         // 验证签名
