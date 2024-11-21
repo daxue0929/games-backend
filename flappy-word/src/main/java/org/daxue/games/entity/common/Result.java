@@ -36,6 +36,11 @@ public class Result<T> {
         return result;
     }
 
+    public static <T> Result<T> buildSuccess(String message) {
+        Result<T> result = new Result<T>(ResultCode.SUCCESS.getCode(), message);
+        return result;
+    }
+
     public static <T> Result<T> buildSuccess(T data) {
         Result<T> result = new Result<T>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), data);
         return result;

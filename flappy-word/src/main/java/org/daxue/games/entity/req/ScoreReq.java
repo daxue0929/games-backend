@@ -7,9 +7,6 @@ import lombok.Data;
 @Data
 public class ScoreReq {
 
-    @NotBlank(message = "code cannot be blank")
-    String userId;
-
     @NotNull(message = "score cannot be null")
     Integer score;
 

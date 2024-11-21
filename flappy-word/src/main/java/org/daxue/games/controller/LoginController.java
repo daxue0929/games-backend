@@ -1,6 +1,10 @@
 package org.daxue.games.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.nimbusds.jose.JOSEException;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.daxue.games.entity.common.Result;
@@ -8,6 +12,7 @@ import org.daxue.games.entity.common.ResultCode;
 import org.daxue.games.entity.req.LoginReq;
 import org.daxue.games.entity.resp.LoginResp;
 import org.daxue.games.manager.TokenCacheManager;
+import org.daxue.games.manager.TokenService;
 import org.daxue.games.pojo.User;
 import org.daxue.games.service.UserService;
 import org.daxue.games.utils.IDUtil;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/login")
@@ -28,23 +34,25 @@ public class LoginController {
     UserService userService;
 
     @Resource
-    TokenCacheManager tokenCacheManager;
+    TokenService tokenService;
+
+    @Resource
+    ObjectMapper objectMapper;
 
     @PostMapping
-    public Result loginOrReg(@RequestBody @Valid LoginReq req) {
+    public Result loginOrReg(@RequestBody @Valid LoginReq req) throws JOSEException {
         String username = req.getUsername();
         String code = req.getCode();
         User oldUser = userService.getOne(Wrappers.lambdaQuery(User.class).eq(User::getName, username));
-        Long expire = Long.valueOf(30 * 60);
         if (oldUser != null) {
             if (!oldUser.getCode().equals(code)) {
-                Result.build(ResultCode.BAD_REQUEST_CODE);
+                return Result.build(ResultCode.BAD_REQUEST_CODE);
             }
-            String token = tokenCacheManager.setCache(IDUtil.genUUID(), oldUser.getUserId(), Duration.ofSeconds(expire));
+            Map<String, Object> map = objectMapper.convertValue(oldUser, Map.class);
+            String token = tokenService.createJwt(oldUser.getUserId(), map);
             return Result.buildSuccess(LoginResp.builder()
                     .userId(oldUser.getUserId())
                             .token(token)
-                            .expire(expire)
                     .build()
             );
         }
@@ -57,12 +65,12 @@ public class LoginController {
                 .setCreateTime(now)
                 .setUpdateTime(now);
         userService.save(user);
-        String token = tokenCacheManager.setCache(IDUtil.genUUID(), newUserId, Duration.ofSeconds(expire));
+        Map<String, Object> map = objectMapper.convertValue(user, Map.class);
+        String token = tokenService.createJwt(newUserId, map);
         return Result.buildSuccess(
                 LoginResp.builder()
                         .userId(newUserId)
                         .token(token)
-                        .expire(expire)
                         .build()
         );
     }

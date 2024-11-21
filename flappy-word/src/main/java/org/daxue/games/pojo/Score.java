@@ -38,6 +38,6 @@ public class Score {
     LocalDateTime createTime;
 
     @TableField(value = "update_time")
-    LocalDateTime update_time;
+    LocalDateTime updateTime;
 
 }

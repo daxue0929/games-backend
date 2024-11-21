@@ -5,10 +5,15 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LoginResp {
+public class UserRankResp {
 
     String userId;
 
-    String token;
+    String name;
 
+    int number;
+
+    Integer score;
+
+    Integer hurdle;
 }

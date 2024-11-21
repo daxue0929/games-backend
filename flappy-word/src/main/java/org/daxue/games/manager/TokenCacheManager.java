@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+
 public class TokenCacheManager {
 
     private final Map<String, Token> caches = new HashMap<>();

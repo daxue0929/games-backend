@@ -16,15 +16,23 @@ curl --location 'http://localhost:9001/login' \
 ```
 **上报**
 ```bash
+
 curl --location 'http://localhost:9001/ranking' \
+--header 'Authorization: Bearer token' \
 --header 'Content-Type: application/json' \
 --data '{
-    "userId": "user-d571cacb107f4cdba802f08572345fda",
-    "score": 8,
+    "score": 10,
     "hurdle": 2
 }'
 ```
 **排行榜**
 ```bash
-curl --location 'http://localhost:9001/ranking'
+curl --location 'http://localhost:9001/ranking' \
+--header 'Authorization: Bearer token'
+```
+
+**当前用户排名**
+```bash
+curl --location 'http://localhost:9001/ranking/current' \
+--header 'Authorization: Bearer token'
 ```
