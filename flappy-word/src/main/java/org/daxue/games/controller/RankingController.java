@@ -37,6 +37,9 @@ public class RankingController {
     @Resource
     TokenService tokenService;
 
+    @Resource
+    ObjectMapper objectMapper;
+
     @PostMapping
     public Result report(@RequestBody @Valid ScoreReq req) throws ParseException {
         String token = ServletUtils.getHeader(HttpHeaders.AUTHORIZATION).substring(7);
@@ -87,16 +90,26 @@ public class RankingController {
         List<Score> list = scoreService.list(Wrappers.lambdaQuery(Score.class)
                 .orderByDesc(Score::getScore).orderByAsc(Score::getCreateTime)
         );
-        int number = 0;
-        UserRankResp.UserRankRespBuilder builder = UserRankResp.builder().userId(userId);
-        for (Score score : list) {
-            number++;
+        JWTClaimsSet payload = tokenService.getClaims(token);
+        Object name = payload.getClaim("name");
+        int number = 1;
+        UserRankResp.UserRankRespBuilder builder = UserRankResp.builder()
+                .userId(userId)
+                .name(name.toString());
+        Boolean flag = true;
+        for (int i = 0; i <list.size(); i++) {
+            Score score = list.get(i);
             if (score.getUserId().equals(userId)) {
-                builder.name(score.getName());
-                builder.score(score.getScore());
-                builder.hurdle(score.getHurdle());
+                flag = false;
+                number = i;
                 break;
             }
+            number = i;
+        }
+        if (flag) {
+            number = 0;
+        }else {
+            number = number + 1;
         }
         builder.number(number);
         return Result.buildSuccess(builder.build());
