@@ -14,5 +14,5 @@ public class ScoreReq {
     @NotNull(message = "hurdle cannot be null")
     Integer hurdle;
 
-    List<UserAction> userActions;
+    String track;
 }
