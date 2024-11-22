@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.daxue.games.entity.common.Result;
 import org.daxue.games.entity.common.ResultCode;
+import org.daxue.games.exception.base.BusinessException;
 import org.daxue.games.manager.TokenService;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -53,6 +54,9 @@ public class AuthFilter extends OncePerRequestFilter {
         } catch (JOSEException | ParseException  e) {
             sendErrorResponse(response, ResultCode.SC_UNAUTHORIZED, e.getMessage());
             return;
+        }catch (BusinessException businessException) {
+            sendErrorResponse(response, businessException.getCode(), businessException.getMessage());
+            return;
         }
         filterChain.doFilter(request, response);
     }
@@ -64,6 +68,14 @@ public class AuthFilter extends OncePerRequestFilter {
 
     private boolean isWhitelisted(String path) {
         return WHITELIST_PATHS.stream().anyMatch(pattern -> pathMatcher.match(pattern, path));
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, Integer resultCode, String message) throws IOException {
+        response.setStatus(200);
+        response.setContentType("application/json;charset=UTF-8");
+        Result<Object> result = Result.build(resultCode, message);
+        String jsonResponse = objectMapper.writeValueAsString(result);
+        response.getWriter().write(jsonResponse);
     }
 
     private void sendErrorResponse(HttpServletResponse response, ResultCode resultCode) throws IOException {
