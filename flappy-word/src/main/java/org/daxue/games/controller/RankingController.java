@@ -2,20 +2,25 @@ package org.daxue.games.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.JWTClaimsSet;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONValue;
 import org.daxue.games.entity.common.Result;
 import org.daxue.games.entity.common.ResultCode;
 import org.daxue.games.entity.req.ScoreReq;
+import org.daxue.games.entity.req.UserAction;
 import org.daxue.games.entity.resp.UserRankResp;
 import org.daxue.games.manager.TokenService;
 import org.daxue.games.pojo.Score;
 import org.daxue.games.pojo.User;
 import org.daxue.games.service.ScoreService;
 import org.daxue.games.service.UserService;
+import org.daxue.games.utils.CryptoUtil;
 import org.daxue.games.utils.ServletUtils;
 import org.daxue.games.validation.GameScoreValidation;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +28,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,9 +53,23 @@ public class RankingController {
     @PostMapping
     public Result report(@RequestBody @Valid ScoreReq req) throws ParseException {
 
+        log.info("进来了");
+        String decrypt = CryptoUtil.decrypt(req.getTrack());
+
+        System.out.println("decrypt = " + decrypt);
+
+        ObjectMapper mapper = new ObjectMapper();
+        List<UserAction> parse = null;
+        try {
+            parse = mapper.readValue(decrypt, new TypeReference<List<UserAction>>(){});
+        } catch (JsonProcessingException e) {
+            log.error("解析用户行为数据失败", e);
+        }
+        System.out.println("parse = " + parse);
+
         // 分数校验
         GameScoreValidation validator = GameScoreValidation.builder()
-                .actions(req.getUserActions())
+                .actions(parse)
                 .reportedScore(req.getScore())
                 .reportedThroughCount(req.getHurdle())
                 .build();
