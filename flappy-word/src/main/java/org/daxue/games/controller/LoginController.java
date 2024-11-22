@@ -88,7 +88,7 @@ public class LoginController {
     }
 
     @PostMapping("/refreshToken")
-    public Result refreshToken(@RequestBody RefreshTokenReq req) throws ParseException, JOSEException {
+    public Result refreshToken(@RequestBody @Valid RefreshTokenReq req) throws ParseException, JOSEException {
         String refreshToken = req.getRefreshToken();
         try {
             boolean b = tokenService.verifyJwt(refreshToken);
