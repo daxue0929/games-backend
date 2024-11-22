@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.JWTClaimsSet;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.daxue.games.entity.common.Result;
 import org.daxue.games.entity.common.ResultCode;
 import org.daxue.games.entity.req.ScoreReq;
@@ -16,6 +17,7 @@ import org.daxue.games.pojo.User;
 import org.daxue.games.service.ScoreService;
 import org.daxue.games.service.UserService;
 import org.daxue.games.utils.ServletUtils;
+import org.daxue.games.validation.GameScoreValidation;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/ranking")
 public class RankingController {
@@ -43,6 +45,22 @@ public class RankingController {
 
     @PostMapping
     public Result report(@RequestBody @Valid ScoreReq req) throws ParseException {
+
+        // 分数校验
+        GameScoreValidation validator = GameScoreValidation.builder()
+                .actions(req.getUserActions())
+                .reportedScore(req.getScore())
+                .reportedThroughCount(req.getHurdle())
+                .build();
+
+        boolean isValid = validator.validate();
+
+        if (!isValid) {
+            List<String> errors = validator.getValidationErrors();
+            log.warn("分数无效原因: \n{}", errors.stream().reduce((a, b) -> a + "\n" + b).orElse(""));
+            return Result.build(ResultCode.GAME_INVALID_SCORE);
+        }
+
         String token = ServletUtils.getHeader(HttpHeaders.AUTHORIZATION).substring(7);
         JWTClaimsSet claims = tokenService.getClaims(token);
         String userId = claims.getSubject();
