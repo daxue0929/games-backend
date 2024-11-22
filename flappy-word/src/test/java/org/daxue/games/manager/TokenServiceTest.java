@@ -5,7 +5,6 @@ import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 
@@ -17,12 +16,14 @@ import java.util.Map;
 @Slf4j
 class TokenServiceTest {
 
+    private static final Long expireSecondToken = 60 * 60L;
+
     @Resource
     TokenService tokenService;
 
 //    @Test
     void saveToken() throws JOSEException {
-        String jwt = tokenService.createJwt("test-sub", Map.of("name", "大雪"));
+        String jwt = tokenService.createJwt("test-sub", expireSecondToken, Map.of("name", "大雪"));
         tokenService.saveToken("test-sub", jwt,  60 * 60L);
         String token = tokenService.getToken("test-sub");
         Assertions.assertEquals(true, StringUtils.isNotBlank(token));
@@ -30,7 +31,7 @@ class TokenServiceTest {
 
 //    @Test
     void createJwt() throws ParseException, JOSEException {
-        String jwt = tokenService.createJwt("test-sub", Map.of("name", "大雪"));
+        String jwt = tokenService.createJwt("test-sub", expireSecondToken, Map.of("name", "大雪"));
         log.info(jwt);
         boolean b = tokenService.verifyJwt(jwt);
         Assertions.assertEquals(true, b);
