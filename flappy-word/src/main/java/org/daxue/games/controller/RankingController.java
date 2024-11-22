@@ -52,12 +52,7 @@ public class RankingController {
 
     @PostMapping
     public Result report(@RequestBody @Valid ScoreReq req) throws ParseException {
-
-        log.info("进来了");
         String decrypt = CryptoUtil.decrypt(req.getTrack());
-
-        System.out.println("decrypt = " + decrypt);
-
         ObjectMapper mapper = new ObjectMapper();
         List<UserAction> parse = null;
         try {
@@ -65,8 +60,6 @@ public class RankingController {
         } catch (JsonProcessingException e) {
             log.error("解析用户行为数据失败", e);
         }
-        System.out.println("parse = " + parse);
-
         // 分数校验
         GameScoreValidation validator = GameScoreValidation.builder()
                 .actions(parse)
