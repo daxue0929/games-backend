@@ -9,6 +9,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.daxue.games.annotation.RequestLimit;
 import org.daxue.games.entity.common.Result;
 import org.daxue.games.entity.common.ResultCode;
 import org.daxue.games.entity.req.LoginReq;
@@ -28,6 +29,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+@RequestLimit(count = 20)
 @Slf4j
 @RestController
 @RequestMapping("/login")

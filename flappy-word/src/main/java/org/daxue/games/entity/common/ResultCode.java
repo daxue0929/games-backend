@@ -11,6 +11,7 @@ public enum ResultCode {
     NEXT_LOGIN(40004, "请重新登录"),
     NOT_FOUND(404, "资源不存在"),
     INTERNAL_SERVER_ERROR(500, "服务器内部错误"),
+    REQUEST_LIMIT(50001, "接口繁忙,请稍后重试"),
     SUCCESS(200, "请求成功"), // 成功
 
     // 游戏异常

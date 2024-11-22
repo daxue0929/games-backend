@@ -10,6 +10,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONValue;
+import org.daxue.games.annotation.RequestLimit;
 import org.daxue.games.entity.common.Result;
 import org.daxue.games.entity.common.ResultCode;
 import org.daxue.games.entity.req.ScoreReq;
@@ -33,6 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@RequestLimit(count = 100)
 @Slf4j
 @RestController
 @RequestMapping("/ranking")

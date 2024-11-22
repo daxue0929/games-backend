@@ -27,7 +27,7 @@ import java.util.List;
 public class AuthFilter extends OncePerRequestFilter {
 
     private static final List<String> WHITELIST_PATHS =
-            Arrays.asList("/login", "/login/refreshToken");
+            Arrays.asList("/login", "/login/refreshToken", "/hello");
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 

@@ -123,4 +123,38 @@ public class ServletUtils {
         RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
         return (ServletRequestAttributes) attributes;
     }
+
+    /**
+     * 获得用户远程地址
+     */
+    public static String getRemoteAddr(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (StringUtils.isBlank(ip)) {
+            if (StringUtils.isBlank(ip)) {
+                ip = request.getHeader("Proxy-Client-IP");
+            }
+            if (StringUtils.isBlank(ip)) {
+                ip = request.getHeader("WL-Proxy-Client-IP");
+            }
+            if (StringUtils.isBlank(ip)) {
+                ip = request.getHeader("HTTP_CLIENT_IP");
+            }
+            if (StringUtils.isBlank(ip)) {
+                ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+            }
+            if (StringUtils.isBlank(ip)) {
+                ip = request.getRemoteAddr();
+            }
+        } else if (StringUtils.isNotBlank(ip) && ip.length() > 15) {
+            String[] ips = ip.split(",");
+            for (int index = 0; index < ips.length; index++) {
+                String strIp = (String) ips[index];
+                if (!("unknown".equalsIgnoreCase(strIp))) {
+                    ip = strIp;
+                    break;
+                }
+            }
+        }
+        return ip;
+    }
 }
