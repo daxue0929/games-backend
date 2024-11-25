@@ -15,7 +15,7 @@ import java.util.*;
 @Builder
 @Slf4j
 public class GameScoreValidation {
-    private static final double MIN_INTERVAL_TIME = 150; // 最小间隔时间
+    private static final double MIN_INTERVAL_TIME = 50; // 最小间隔时间
     private static final double MAX_INTERVAL_TIME = 1700; // 最大间隔时间
     private static final double INITIAL_PIPE_SPEED = 1.5;
     private static final double SPEED_INCREASE = 0.01;
