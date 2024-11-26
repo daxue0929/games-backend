@@ -145,6 +145,8 @@ public class RankingController {
         }
         if (flag) {
             number = 0;
+            builder.score(0);
+            builder.hurdle(0);
         }else {
             number = number + 1;
         }

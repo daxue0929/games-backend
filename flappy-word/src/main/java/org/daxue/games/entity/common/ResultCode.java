@@ -9,6 +9,7 @@ public enum ResultCode {
     NOT_FOUND_USER(40002, "用户不存在"),
     UNAUTHORIZED_EXPIRE(40003, "token已过期,请刷新"),
     NEXT_LOGIN(40004, "请重新登录"),
+    ACCOUNT_BANNED(40005, "已被关进小黑屋"), // 账号状态被禁用
     NOT_FOUND(404, "资源不存在"),
     INTERNAL_SERVER_ERROR(500, "服务器内部错误"),
     GAME_INVALID_SCORE(50001, "分数无效"), // 游戏异常

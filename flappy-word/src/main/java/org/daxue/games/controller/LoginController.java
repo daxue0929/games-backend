@@ -2,21 +2,19 @@ package org.daxue.games.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWTClaimsSet;
-import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.daxue.games.annotation.RequestLimit;
 import org.daxue.games.entity.common.Result;
 import org.daxue.games.entity.common.ResultCode;
+import org.daxue.games.entity.common.UserStatus;
 import org.daxue.games.entity.req.LoginReq;
 import org.daxue.games.entity.req.RefreshTokenReq;
 import org.daxue.games.entity.resp.LoginResp;
 import org.daxue.games.exception.base.BusinessException;
-import org.daxue.games.manager.TokenCacheManager;
 import org.daxue.games.manager.TokenService;
 import org.daxue.games.pojo.User;
 import org.daxue.games.service.UserService;
@@ -25,7 +23,6 @@ import org.daxue.games.utils.IDUtil;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -57,6 +54,10 @@ public class LoginController {
             if (!oldUser.getCode().equals(code)) {
                 return Result.build(ResultCode.BAD_REQUEST_CODE);
             }
+            if (UserStatus.Disable.equals(oldUser.getStatus())) {
+                // 禁用状态 关小黑屋
+                return Result.build(ResultCode.ACCOUNT_BANNED);
+            }
             Map<String, Object> map = objectMapper.convertValue(oldUser, Map.class);
             String token = tokenService.createJwt(oldUser.getUserId(),expireSecondToken, map);
             String refreshToken = tokenService.createJwt(oldUser.getUserId(), expireSecondRefreshToken, null);
@@ -73,6 +74,7 @@ public class LoginController {
         user.setUserId(newUserId)
                 .setCode(code)
                 .setName(username)
+                .setStatus(UserStatus.Active)
                 .setCreateTime(now)
                 .setUpdateTime(now);
         userService.save(user);

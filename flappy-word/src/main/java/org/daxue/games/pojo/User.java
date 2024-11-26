@@ -31,6 +31,9 @@ public class User {
     @TableField(value = "code")
     String code;
 
+    @TableField(value = "status")
+    String status;
+
     @TableField(value = "create_time")
     LocalDateTime createTime;
 
