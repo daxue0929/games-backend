@@ -2,19 +2,19 @@
 <Configuration status="info">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout>
-                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} - %msg%n%throwable</Pattern>
-            </PatternLayout>
+            <JsonLayout compact="true" eventEol="true"></JsonLayout>
         </Console>
         <RollingFile name="RollingFile"
                      fileName="/opt/app/flappy-word/backend/logs/log.log"
                      filePattern="/opt/app/flappy-word/backend/logs/log-%d{yyyy-MM-dd}-%i.log">
             <PatternLayout>
-                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} - %msg%n%throwable</Pattern>
+                <Pattern>{"timestamp":"%d{yyyy-MM-dd HH:mm:ss.SSS}","level":"%p","thread":"%t","logger":"%c{36}","message":"%m","exception":"%throwable"}\n</Pattern>
             </PatternLayout>
             <Policies>
-                <SizeBasedTriggeringPolicy size="2MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10kb"/>
             </Policies>
+            <DefaultRolloverStrategy max="7"/>
         </RollingFile>
     </Appenders>
 
